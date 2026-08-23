@@ -9,15 +9,16 @@ Added
     Feature to avoid collison with walls.
     Feature to avoid collison with itself.
     Feature to avoid collison with other snakes.
-
+    Feature to move towards food instead of random, to regain health and survive longer.
 
 Changed
 
     Nothing.
 
 Removed 
-[any removed features]
 
+    Nothing.
 
 Fixed 
-[any bug fixes]
+
+    Nothing.
