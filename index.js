@@ -67,6 +67,15 @@ function avoidSnakes(futureHead, snakesBodies){
 	return true;
 }
 
+  // TODO: Step 4 - Move towards food instead of random, to regain health and survive longer
+
+// Calculate the manhattan distance between the head and the food, and return the distance
+function getManhattanDistance(head, food) {
+  return Math.abs(head.x - food.x) + Math.abs(head.y - food.y);
+}
+
+
+
 // move is called on every turn and returns your next move
 // Valid moves are "up", "down", "left", or "right"
 // See https://docs.battlesnake.com/api/example-move for available data
@@ -159,7 +168,7 @@ function move(gameState) {
   const nextMove = safeMoves[Math.floor(Math.random() * safeMoves.length)];
 
   // TODO: Step 4 - Move towards food instead of random, to regain health and survive longer
-  // food = gameState.board.food;
+  food = gameState.board.food;
 
   console.log(`MOVE ${gameState.turn}: ${nextMove}`)
   return { move: nextMove };
