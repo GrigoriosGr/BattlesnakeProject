@@ -13,6 +13,8 @@ Added
     Added a function to check for head-on collisions with other snakes.
     Added the VSCode workspace file to the project.
     Added prettier VSCode extension to format code and configures default javascript formatting.
+    Added eslint via VSCode extension to check for code quality and configures default javascript linting.
+    Run the codebase through prettier and eslint to fix formatting and linting issues.
 
 Changed
 
