@@ -62,12 +62,35 @@ function avoidItself(newHeadPos, myBody) {
 //
 // Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
 //
+// This function will check if the new head position overlaps with the tail coordinates of another snakes, and if so, to check if there is food in the next move
+function isMoveToAnotherSnakeTailOK(futureHead, snake, food) {
+  const tail = snake.body[snake.body.length - 1];
+  if (futureHead.x === tail.x && futureHead.y === tail.y) {
+    console.log('Hits Other snakes tail');
+    // If there is food in the next move, we want to avoid the tail collision, otherwise we can engage with the tail
+    const isFoodInNextMove = food.some((foodItem) => {
+      return (
+        (foodItem.x === futureHead.x && foodItem.y === futureHead.y + 1) ||
+        (foodItem.x === futureHead.x && foodItem.y === futureHead.y - 1) ||
+        (foodItem.x === futureHead.x + 1 && foodItem.y === futureHead.y) ||
+        (foodItem.x === futureHead.x - 1 && foodItem.y === futureHead.y)
+      );
+    });
+    return !isFoodInNextMove;
+  }
+  return true;
+}
+
 // This function will check if the new head position is the same as any of the body coordinates of other snakes
-function avoidSnakes(futureHead, snakesBodies) {
+function avoidSnakes(futureHead, snakesBodies, food) {
   snakesBodies.forEach((snake) => {
     snake.body.forEach((coord) => {
       if (futureHead.x === coord.x && futureHead.y === coord.y) {
         console.log('Hits Other snakes');
+        // Check if the future head position is the same as the tail of the other snake, and if so, check if there is food in the next move
+        if (coord === snake.body[snake.body.length - 1]) {
+          return isMoveToAnotherSnakeTailOK(futureHead, snakesBodies, food);
+        }
         return false;
       }
     });
@@ -111,16 +134,16 @@ function getOptimalMoveToEat(myHead, food, isMoveSafe) {
 // Step 5 - Check head-on collisions with other snakes
 //
 // This function will check if the new head position is the same as any of the body coordinates of other snakes
-function isBadSnakeHeadCollision(futureHead, snakesBodies, myLength) {
+function isSnakeHeadCollisionOK(futureHead, snakesBodies, myLength) {
   snakesBodies.forEach((snake) => {
     if (futureHead.x === snake.head.x && futureHead.y === snake.head.y) {
       console.log('Hits Other snakes head');
       // We want to avoid head-on collisions with snakes that are bigger than us, but we want to engage with smaller snakes
       const isBiggerThanMe = snake.length > myLength; // gameState.you.length;
-      return isBiggerThanMe;
+      return !isBiggerThanMe;
     }
   });
-  return false;
+  return true;
 }
 
 // move is called on every turn and returns your next move
@@ -189,17 +212,18 @@ function move(gameState) {
   // TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
   // Check if after the move the new head position would be in the same position as any of the body coordinates of other snakes
   const opponents = gameState.board.snakes;
+  const food = gameState.board.food;
   if (isMoveSafe.up) {
-    isMoveSafe.up = avoidSnakes({ x: newHead.x, y: newHead.y - 1 }, opponents);
+    isMoveSafe.up = avoidSnakes({ x: newHead.x, y: newHead.y - 1 }, opponents, food);
   }
   if (isMoveSafe.down) {
-    isMoveSafe.down = avoidSnakes({ x: newHead.x, y: newHead.y + 1 }, opponents);
+    isMoveSafe.down = avoidSnakes({ x: newHead.x, y: newHead.y + 1 }, opponents, food);
   }
   if (isMoveSafe.left) {
-    isMoveSafe.left = avoidSnakes({ x: newHead.x - 1, y: newHead.y }, opponents);
+    isMoveSafe.left = avoidSnakes({ x: newHead.x - 1, y: newHead.y }, opponents, food);
   }
   if (isMoveSafe.right) {
-    isMoveSafe.right = avoidSnakes({ x: newHead.x + 1, y: newHead.y }, opponents);
+    isMoveSafe.right = avoidSnakes({ x: newHead.x + 1, y: newHead.y }, opponents, food);
   }
 
   // Are there any safe moves left?
@@ -211,7 +235,6 @@ function move(gameState) {
   }
 
   // Step 4 - Move towards food instead of random, to regain health and survive longer
-  const food = gameState.board.food;
   let nextMove = getOptimalMoveToEat(myHead, food, isMoveSafe);
 
   // Choose a random move from the safe moves
