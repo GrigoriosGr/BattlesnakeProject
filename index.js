@@ -37,6 +37,20 @@ function end(gameState) {
   console.log("GAME OVER\n");
 }
 
+// TODO: Step 2 - Prevent your Battlesnake from colliding with itself
+// This function will check if the new head position is the same as any of the body coordinates
+function avoidItself(newHeadPos, myBody){
+
+	myBody.forEach((coord)=>{
+
+		if(newHeadPos.x== coord.x && newHeadPos.y== coord.y){
+			console.log("Hits self");
+			return false;
+		}
+	})
+	return true;
+}
+
 // move is called on every turn and returns your next move
 // Valid moves are "up", "down", "left", or "right"
 // See https://docs.battlesnake.com/api/example-move for available data
@@ -86,10 +100,26 @@ function move(gameState) {
 
 
   // TODO: Step 2 - Prevent your Battlesnake from colliding with itself
-  // myBody = gameState.you.body;
+  // Check if after the move the new head position would be in the same position as any of the body coordinates
+  newHead = myHead;
+  if(isMoveSafe.up) {
+    isMoveSafe.up = avoidItself({x: newHead.x, y: newHead.y - 1}, gameState.you.body);
+  }
+  if(isMoveSafe.down) {
+    isMoveSafe.down = avoidItself({x: newHead.x, y: newHead.y + 1}, gameState.you.body);
+  }
+  if(isMoveSafe.left) {
+    isMoveSafe.left = avoidItself({x: newHead.x - 1, y: newHead.y}, gameState.you.body);
+  }
+  if(isMoveSafe.right) {
+    isMoveSafe.right = avoidItself({x: newHead.x + 1, y: newHead.y}, gameState.you.body);
+  }
 
   // TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
-  // opponents = gameState.board.snakes;
+  opponents = gameState.board.snakes;
+
+
+
 
   // Are there any safe moves left?
   const safeMoves = Object.keys(isMoveSafe).filter(key => isMoveSafe[key]);
