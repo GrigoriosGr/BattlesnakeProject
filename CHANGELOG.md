@@ -11,15 +11,17 @@ Added
     Feature to avoid collison with other snakes.
     Feature to move towards food instead of random, to regain health and survive longer.
     Added a function to check for head-on collisions with other snakes.
+    Added the VSCode workspace file to the project.
+    Added prettier VSCode extension to format code and configures default javascript formatting.
 
 Changed
 
     Nothing.
 
-Removed 
+Removed
 
     Nothing.
 
-Fixed 
+Fixed
 
     Nothing.
