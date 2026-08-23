@@ -40,6 +40,46 @@ function end(gameState) {
 //
 // Function to choose a random move from the list of safe moves (moved to a separate function for better readability)
 //
+export function floodFillBoard(board, row, col, newValue) {
+  const numRows = board.length;
+  const numCols = board[0].length;
+
+  const originalValue = board[row][col];
+
+  // Helper function to perform flood fill
+  function fill(r, c) {
+    if (
+      r < 0 ||
+      r >= numRows ||
+      c < 0 ||
+      c >= numCols ||
+      board[r][c] !== originalValue
+    ) {
+      return;
+    }
+
+    board[r][c] = newValue;
+
+    // Recursively fill neighboring cells
+    fill(r - 1, c);
+    fill(r + 1, c);
+    fill(r, c - 1);
+    fill(r, c + 1);
+    fill(r - 1, c - 1);
+    fill(r - 1, c + 1);
+    fill(r + 1, c - 1);
+    fill(r + 1, c + 1);
+  }
+
+  // Perform flood fill starting from the specified coordinates
+  fill(row, col);
+
+  return board;
+}
+
+//
+// Function to choose a random move from the list of safe moves (moved to a separate function for better readability)
+//
 function randomNextMove(safeMoves) {
   const nextMove = safeMoves[Math.floor(Math.random() * safeMoves.length)];
   return nextMove;
