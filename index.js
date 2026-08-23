@@ -37,14 +37,18 @@ function end(gameState) {
   console.log("GAME OVER\n");
 }
 
+//
 // Function to choose a random move from the list of safe moves (moved to a separate function for better readability)
+//
 function randomNextMove(safeMoves) {
   const nextMove = safeMoves[Math.floor(Math.random() * safeMoves.length)];
   return nextMove;
 }
 
 
+//
 // Step 2 - Prevent your Battlesnake from colliding with itself
+//
 // This function will check if the new head position is the same as any of the body coordinates
 function avoidItself(newHeadPos, myBody){
 
@@ -75,6 +79,7 @@ function avoidSnakes(futureHead, snakesBodies){
 		})
 	return true;
 }
+
 
 //
 // Step 4 - Move towards food instead of random, to regain health and survive longer
@@ -113,6 +118,21 @@ function getOptimalMoveToEat(myHead, food, isMoveSafe) {
   return randomNextMove(Object.keys(isMoveSafe).filter(move => isMoveSafe[move]));
 }
 
+//
+// Step 5 - Check head-on collisions with other snakes
+//
+// This function will check if the new head position is the same as any of the body coordinates of other snakes
+function isSnakeHeadCollision(futureHead, snakesBodies, isBiggerThanMe){
+
+  	snakesBodies.forEach((snake)=>{
+			if(futureHead.x===snake.head.x && futureHead.y===snake.head.y){
+				console.log("Hits Other snakes head");
+        isBiggerThanMe = snake.length > gameState.you.length;
+				return true;
+			}
+		})
+	return false;
+}
 
 
 

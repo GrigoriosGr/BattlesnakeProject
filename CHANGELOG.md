@@ -10,6 +10,7 @@ Added
     Feature to avoid collison with itself.
     Feature to avoid collison with other snakes.
     Feature to move towards food instead of random, to regain health and survive longer.
+    Added a function to check for head-on collisions with other snakes.
 
 Changed
 
