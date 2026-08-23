@@ -10,6 +10,7 @@ Added
     for collisions with the tail and if there is no food next to the snake's head
     it will not block the move.
     Run the codebase through prettier and eslint to fix formatting and linting issues.
+    Added jest VS Code plugin
 
 Changed
 
