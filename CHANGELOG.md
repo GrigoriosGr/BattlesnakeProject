@@ -11,6 +11,7 @@ Added
     it will not block the move.
     Run the codebase through prettier and eslint to fix formatting and linting issues.
     Added jest VS Code plugin
+    Added a function to flood fill the board
 
 Changed
 
