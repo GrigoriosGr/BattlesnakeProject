@@ -106,7 +106,6 @@ function randomNextMove(safeMoves) {
 }
 
 
-
 //
 // Step 2 - Prevent your Battlesnake from colliding with itself
 //
@@ -260,6 +259,119 @@ function getOptimalMoveToEat(myHead, food, isMoveSafe) {
   return randomNextMove(Object.keys(isMoveSafe).filter((move) => isMoveSafe[move]));
 }
 
+/**
+ * Gets an array of smaller snakes based on the provided criteria.
+ * @author: Grigoris Grigoropoulos
+ * @param {Array<object>} allSnakes - Array of all snakes on the board.
+ * @param {number} myLength - Length of the snake being controlled.
+ * @returns {Array<object>} - Array of smaller snakes.
+ */
+function getSmallerSnakes(allSnakes, myLength) {
+  return allSnakes.filter(
+    (snake) => snake.length < myLength && snake.body.length > 0,
+  );
+}
+
+/**
+ * Finds the closest smaller snake to the provided snake's head.
+ * @author: Grigoris Grigoropoulos
+ * @param {object} myHead - The current position of the snake's head.
+ * @param {Array<object>} smallerSnakes - Array of smaller snakes.
+ * @returns {object|null} - The closest smaller snake or null if none found.
+ */
+function findClosestSmallerSnake(myHead, smallerSnakes) {
+  let closestSmallerSnake;
+  let closestDistance = 1000000; // Initialize with a large number
+
+  for (const snake of smallerSnakes) {
+    const distance = getManhattanDistance( myHead, snake.body[0]);
+
+    if (distance < closestDistance) {
+      closestDistance = distance;
+      closestSmallerSnake = snake;
+    }
+    else if (distance === closestDistance) {
+      // If the distance is the same, choose the snake with the larger length to remove the stronger opponent from the board
+      if (snake.length > closestSmallerSnake.length) {
+        closestSmallerSnake = snake;
+      }
+    }
+  }
+  return closestSmallerSnake;
+}
+
+/**
+ * Gets the next move towards a specific snake's head while considering safety.
+ * @param {object} myHead - The current position of the snake's head.
+ * @param {object} snakeHead - The position of the target snake's head.
+ * @param {object} isMoveSafe - An object representing the safety of each move.
+ * @returns {string} - The next move ("up", "down", "left", or "right") towards the target snake.
+ */
+function moveTowardsSnake(myHead, snakeHead, isMoveSafe) {
+  const dx = snakeHead.x - myHead.x;
+  const dy = snakeHead.y - myHead.y;
+
+  if (dx !== 0 && isMoveSafe[dx > 0 ? "right" : "left"]) {
+    return dx > 0 ? "right" : "left";
+  } else if (dy !== 0 && isMoveSafe[dy > 0 ? "up" : "down"]) {
+    return dy > 0 ? "up" : "down";
+  }
+  return randomNextMove(isMoveSafe);
+}
+
+/**
+ * Hunts smaller snakes by determining the next move based on the game state and safety of moves.
+ * @author: Grigoris Grigoropoulos
+ * @param {object} gameState - The current state of the game.
+ * @param {object} myHead - The current position of the snake's head.
+ * @param {object} isMoveSafe - An object representing the safety of each move.
+ * @returns {string} - The next move ("up", "down", "left", or "right").
+ */
+function huntSmallerSnakes(gameState, myHead, isMoveSafe) {
+  const myLength = gameState.you.length;
+  const smallerSnakes = getSmallerSnakes(gameState.board.snakes, myLength);
+
+  let closestSmallerSnake = findClosestSmallerSnake(myHead, smallerSnakes);
+
+  if (closestSmallerSnake) {
+    return moveTowardsSnake(myHead, closestSmallerSnake.body[0], isMoveSafe);
+  }
+  return randomNextMove(isMoveSafe);
+}
+
+/**
+ * Tries to find the most optimal move. The most optimal move is:
+ * 1. Hunt smaller snakes if they are present on the board.
+ * 2. Move towards food if there are no smaller snakes.
+ * 3. If there are no smaller snakes and no food, move randomly to a safe position.
+ * @author: Grigoris Grigoropoulos
+ * @param {object} gameState - The current state of the game.
+ * @param {object} isMoveSafe - An object representing the safety of each move.
+ * @returns {string} - The next move ("up", "down", "left", or "right").
+ */
+function determineOptimalNextMove(gameState, isMoveSafe) {
+  const food = gameState.board.food;
+  const myHead = gameState.you.body[0];
+  const myLength = gameState.you.length;
+
+  // Check if there is a smaller snake on the board
+  const hasSmallerSnake = gameState.board.snakes.some(
+    (snake) => snake.id !== gameState.you.id && snake.length < myLength
+  );
+
+  if (hasSmallerSnake) {
+    // If there is a smaller snake, prioritize hunting it
+    const huntMove = huntSmallerSnakes(gameState, myHead, isMoveSafe);
+    if (huntMove !== null) {
+      return huntMove;
+    }
+  } else {
+    return getOptimalMoveToEat(myHead, food, isMoveSafe);
+  }
+  return randomNextMove(isMoveSafe);
+}
+
+
 
 /**
  * move is called on every turn and returns your next move
@@ -356,11 +468,14 @@ function move(gameState) {
   }
 
   // Step 4 - Move towards food instead of random, to regain health and survive longer
-  let nextMove = getOptimalMoveToEat(myHead, food, isMoveSafe);
+  // let nextMove = getOptimalMoveToEat(myHead, food, isMoveSafe);
 
   // Choose a random move from the safe moves
   //---  Removed as the optimal move to eat food is now being used ---
   // const nextMove = safeMoves[Math.floor(Math.random() * safeMoves.length)];
+
+  // Try to find the best possible move based on the current game state and the safety of each move
+  let nextMove = determineOptimalNextMove(gameState, isMoveSafe);
 
   console.log(`MOVE ${gameState.turn}: ${nextMove}`);
   return { move: nextMove };
@@ -373,4 +488,13 @@ runServer({
   end: end,
 });
 
-export { avoidItself, avoidSnakes, isSnakeHeadCollisionOK, getManhattanDistance, getFoodDistances, getOptimalMoveToEat, floodFillBoard };
+export { avoidItself,
+  avoidSnakes,
+  isSnakeHeadCollisionOK,
+  getManhattanDistance,
+  getFoodDistances,
+  getOptimalMoveToEat,
+  getSmallerSnakes,
+  findClosestSmallerSnake,
+  moveTowardsSnake,
+  floodFillBoard };

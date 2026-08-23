@@ -1,4 +1,13 @@
-import { avoidItself, avoidSnakes, isSnakeHeadCollisionOK, getManhattanDistance, getFoodDistances, getOptimalMoveToEat, floodFillBoard } from "./index";
+import { avoidItself,
+  avoidSnakes,
+  isSnakeHeadCollisionOK,
+  getManhattanDistance,
+  getFoodDistances,
+  getOptimalMoveToEat,
+  getSmallerSnakes,
+  findClosestSmallerSnake,
+  moveTowardsSnake,
+  floodFillBoard } from "./index";
 
 describe("avoidItself", () => {
   it("should return true if the move does not collide with itself", () => {
@@ -142,6 +151,83 @@ describe("getOptimalMoveToEat", () => {
     expect(getOptimalMoveToEat(myHead1, food, isMoveSafe)).toBe("up");
 
   });
+});
 
 
+describe("getSmallerSnakes", () => {
+  it("should return the smaller snakes than our snake", () => {
+    const snakes = [
+      {
+        body: [{ x: 1, y: 1 }, { x: 1, y: 2 }, { x: 1, y: 3 }, { x: 1, y: 4 }],
+      },
+      {
+        body: [{ x: 2, y: 2 }, { x: 2, y: 3 }],
+      },
+      {
+        body: [{ x: 4, y: 2 }, { x: 4, y: 3 }, { x: 3, y: 3 }],
+      },
+    ];
+    // Test case 1: There is only one smaller snake than our snake with length 3
+    let smallerSnakesNum = getSmallerSnakes(snakes, 4).length;
+    expect(smallerSnakesNum).toBe(1);
+
+    // Test case 2: There are two smaller snakes than our snake with length 5
+    smallerSnakesNum = getSmallerSnakes(snakes, 5).length;
+    expect(smallerSnakesNum).toBe(2);
+
+    // Test case 3: There are no smaller snakes than our snake with length 2
+    smallerSnakesNum = getSmallerSnakes(snakes, 2).length;
+    expect(smallerSnakesNum).toBe(0);
+
+    // Test case 4: There are 3 smaller snakes than our snake with length 5
+    smallerSnakesNum = getSmallerSnakes(snakes, 5).length;
+    expect(smallerSnakesNum).toBe(3);
+
+  });
+});
+
+
+describe("findClosestSmallerSnake", () => {
+  it("should return the closest smaller snake than our snake", () => {
+    const snakes = [
+      {
+        body: [{ x: 1, y: 1 }, { x: 1, y: 2 }, { x: 1, y: 3 }, { x: 1, y: 4 }],
+      },
+      {
+        body: [{ x: 2, y: 2 }, { x: 2, y: 3 }],
+      },
+      {
+        body: [{ x: 4, y: 2 }, { x: 4, y: 3 }, { x: 3, y: 3 }],
+      },
+    ];
+    // Test case 1: The closest smaller snake is the first
+    let myHead = { x: 0, y: 0 };
+    let smallerSnakes = findClosestSmallerSnake(myHead, snakes);
+    expect(smallerSnakes).toBe(snakes[0]);
+
+    // Test case 2: The closest smaller snake is the last
+    myHead = { x: 4, y: 3 };
+    smallerSnakes = findClosestSmallerSnake(myHead, snakes);
+    expect(smallerSnakes).toBe(snakes[2]);
+
+    // Test case 3: Our snake has the same distance with both the second and the third
+    // so choose the one with the larger length which is the third
+    myHead = { x: 3, y: 2 };
+    smallerSnakes = findClosestSmallerSnake(myHead, snakes);
+    expect(smallerSnakes).toBe(snakes[2]);
+  });
+});
+
+describe("moveTowardsSnake", () => {
+  it("should return the correct move towards a specific snake", () => {
+    const myHead = { x: 0, y: 0 };
+    const snakeHead = { x: 3, y: 4 };
+    const isMoveSafe = {
+      up: true,
+      down: true,
+      left: true,
+      right: false
+    };
+    expect(moveTowardsSnake(myHead, snakeHead, isMoveSafe)).toBe("down");
+  });
 });
