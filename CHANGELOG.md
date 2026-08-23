@@ -3,7 +3,7 @@ Changelog
 All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
-[1.X.X] - 2026-08-20
+[1.0.1] - 2026-08-20
 Added
 
     The function that checks for collisions with other snakes has been updated to check
@@ -17,7 +17,7 @@ Added
 
 Changed
 
-    Nothing.
+    Selected a unique battlesnake username and commited it as a hotfix with tag 'R1.0.1' to the main branch.
 
 Removed
 

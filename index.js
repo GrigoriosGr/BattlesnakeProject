@@ -20,7 +20,7 @@ function info() {
 
   return {
     apiversion: '1',
-    author: 'GregG', // TODO: Your Battlesnake Username
+    author: 'GrigorisG', // Set a unique Battlesnake Username
     color: '#FE1212', // TODO: Choose color
     head: 'default', // TODO: Choose head
     tail: 'default', // TODO: Choose tail
