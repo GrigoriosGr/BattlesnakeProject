@@ -37,7 +37,14 @@ function end(gameState) {
   console.log("GAME OVER\n");
 }
 
-// TODO: Step 2 - Prevent your Battlesnake from colliding with itself
+// Function to choose a random move from the list of safe moves (moved to a separate function for better readability)
+function randomNextMove(safeMoves) {
+  const nextMove = safeMoves[Math.floor(Math.random() * safeMoves.length)];
+  return nextMove;
+}
+
+
+// Step 2 - Prevent your Battlesnake from colliding with itself
 // This function will check if the new head position is the same as any of the body coordinates
 function avoidItself(newHeadPos, myBody){
 
@@ -51,7 +58,9 @@ function avoidItself(newHeadPos, myBody){
 	return true;
 }
 
-// TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
+//
+// Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
+//
 // This function will check if the new head position is the same as any of the body coordinates of other snakes
 function avoidSnakes(futureHead, snakesBodies){
 
@@ -67,12 +76,43 @@ function avoidSnakes(futureHead, snakesBodies){
 	return true;
 }
 
-  // TODO: Step 4 - Move towards food instead of random, to regain health and survive longer
+//
+// Step 4 - Move towards food instead of random, to regain health and survive longer
+//
 
 // Calculate the manhattan distance between the head and the food, and return the distance
 function getManhattanDistance(head, food) {
   return Math.abs(head.x - food.x) + Math.abs(head.y - food.y);
 }
+
+// Calculate the distances from the head to each food item and return an array of distances
+function getFoodDistances(myHead, food) {
+  return food.map((foodItem) => {
+    return calculateManhattanDistance(
+      myHead.x,
+      myHead.y,
+      foodItem.x,
+      foodItem.y,
+    );
+  });
+}
+
+// Try to find the optimal move for eating food by moving towards the closest food item
+function getOptimalMoveToEat(myHead, food, isMoveSafe) {
+  const foodDistances = calculateFoodDistances(myHead, food);
+  const closestFood = food[foodDistances.indexOf(Math.min(...foodDistances))];
+
+  const dx = closestFood.x - myHead.x;
+  const dy = closestFood.y - myHead.y;
+
+  if (dx !== 0 && isMoveSafe[dx > 0 ? "right" : "left"]) {
+    return dx > 0 ? "right" : "left";
+  } else if (dy !== 0 && isMoveSafe[dy > 0 ? "up" : "down"]) {
+    return dy > 0 ? "up" : "down";
+  }
+  return randomNextMove(Object.keys(isMoveSafe).filter(move => isMoveSafe[move]));
+}
+
 
 
 
@@ -161,14 +201,18 @@ function move(gameState) {
   const safeMoves = Object.keys(isMoveSafe).filter(key => isMoveSafe[key]);
   if (safeMoves.length == 0) {
     console.log(`MOVE ${gameState.turn}: No safe moves detected! Moving down`);
+    // No safe moves left, so choose a random move (this will likely lead to death)
     return { move: "down" };
   }
 
-  // Choose a random move from the safe moves
-  const nextMove = safeMoves[Math.floor(Math.random() * safeMoves.length)];
-
-  // TODO: Step 4 - Move towards food instead of random, to regain health and survive longer
+  // Step 4 - Move towards food instead of random, to regain health and survive longer
   food = gameState.board.food;
+  nextMove = getOptimalMoveToEat(myHead, food, isMoveSafe)
+
+  // Choose a random move from the safe moves
+  //---  Removed as the optimal move to eat food is now being used ---
+  // const nextMove = safeMoves[Math.floor(Math.random() * safeMoves.length)];
+
 
   console.log(`MOVE ${gameState.turn}: ${nextMove}`)
   return { move: nextMove };
