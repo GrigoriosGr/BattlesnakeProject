@@ -7,11 +7,13 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 Added
 
     The function that checks for collisions with other snakes has been updated to check
-    for collisions with the tail and if there is no food next to the snake's head
-    it will not block the move.
+     for collisions with the tail and if there is no food next to the snake's head
+     it will not block the move.
     Run the codebase through prettier and eslint to fix formatting and linting issues.
     Added jest VS Code plugin
     Added a function to flood fill the board
+    Added Jest test cases for the collision detection functions, the food distance function,
+     the Manhattan distance function and the optimal move function.
 
 Changed
 
