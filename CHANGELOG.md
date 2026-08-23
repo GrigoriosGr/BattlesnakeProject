@@ -3,6 +3,23 @@ Changelog
 All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
+[1.1.0] - 2026-08-21
+Added
+
+    Nothing.
+
+Changed
+
+    Made the hotfix release and all new features an official minor release, tagged '1.1.0' on the main branch.
+
+Removed
+
+    Nothing.
+
+Fixed
+
+    Nothing.
+
 [1.0.1] - 2026-08-20
 Added
 
@@ -17,7 +34,7 @@ Added
 
 Changed
 
-    Selected a unique battlesnake username and commited it as a hotfix with tag 'R1.0.1' to the main branch.
+    Selected a unique battlesnake username and committed it as a hotfix with tag 'R1.0.1' to the main branch.
 
 Removed
 
@@ -30,13 +47,13 @@ Fixed
 [1.0.0] - 2026-08-19
 Added
 
-    Feature to avoid collison with walls.
-    Feature to avoid collison with itself.
-    Feature to avoid collison with other snakes.
-    Feature to move towards food instead of random, to regain health and survive longer.
+    Feature to avoid collision with walls.
+    Feature to avoid collision with itself.
+    Feature to avoid collision with other snakes.
+    Feature to move towards food instead of randomly, to regain health and survive longer.
     Added a function to check for head-on collisions with other snakes.
     Added the VSCode workspace file to the project.
-    Added prettier VSCode extension to format code and configures default javascript formatting.
+    Added prettier VSCode extension to format code and configure default javascript formatting.
     Added eslint via VSCode extension to check for code quality and configures default javascript linting.
     Run the codebase through prettier and eslint to fix formatting and linting issues.
 
