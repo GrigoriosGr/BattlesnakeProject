@@ -8,6 +8,10 @@ Added
 
     Added jsdoc comments to all functions in index.js file.
     Generated the jsdoc documentation for the index.js file and saved it in the docs folder.
+    Added support to hunt smaller snakes
+    Modifed the determineOptimalNextMove function to prioritize hunting smaller snakes over food when they are nearby and safe to attack.
+    Updated test cases to include scenarios for hunting smaller snakes and verifying the new behavior of the determineOptimalNextMove function.
+    Updated the JSdoc comments to reflect the new behavior of the determineOptimalNextMove function and the added functions for hunting smaller snakes.
 
 Changed
 
