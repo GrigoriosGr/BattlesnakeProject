@@ -33,4 +33,9 @@ export default function runServer(handlers) {
   app.listen(port, host, () => {
     console.log(`Running Battlesnake at http://${host}:${port}...`)
   });
+
+  // Start the Express server
+  app.listen(port, host, () => {
+    console.log(`Running Battlesnake at http://${host}:${port}...`);
+  });
 }

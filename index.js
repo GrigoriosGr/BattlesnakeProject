@@ -40,7 +40,7 @@ function end(gameState) {
 //
 // Function to choose a random move from the list of safe moves (moved to a separate function for better readability)
 //
-export function floodFillBoard(board, row, col, newValue) {
+function floodFillBoard(board, row, col, newValue) {
   const numRows = board.length;
   const numCols = board[0].length;
 
@@ -86,6 +86,22 @@ function randomNextMove(safeMoves) {
 }
 
 //
+// Step 5 - Check head-on collisions with other snakes
+//
+// This function will check if the new head position is the same as any of the body coordinates of other snakes
+function isSnakeHeadCollisionOK(futureHead, snakesBodies, myLength) {
+  snakesBodies.forEach((snake) => {
+    if (futureHead.x === snake.head.x && futureHead.y === snake.head.y) {
+      console.log('Hits Other snakes head');
+      // We want to avoid head-on collisions with snakes that are bigger than us, but we want to engage with smaller snakes
+      const isBiggerThanMe = snake.length > myLength; // gameState.you.length;
+      return !isBiggerThanMe;
+    }
+  });
+  return true;
+}
+
+//
 // Step 2 - Prevent your Battlesnake from colliding with itself
 //
 // This function will check if the new head position is the same as any of the body coordinates
@@ -122,7 +138,7 @@ function isMoveToAnotherSnakeTailOK(futureHead, snake, food) {
 }
 
 // This function will check if the new head position is the same as any of the body coordinates of other snakes
-function avoidSnakes(futureHead, snakesBodies, food) {
+function avoidSnakes(futureHead, snakesBodies, food, myLength) {
   snakesBodies.forEach((snake) => {
     snake.body.forEach((coord) => {
       if (futureHead.x === coord.x && futureHead.y === coord.y) {
@@ -130,6 +146,10 @@ function avoidSnakes(futureHead, snakesBodies, food) {
         // Check if the future head position is the same as the tail of the other snake, and if so, check if there is food in the next move
         if (coord === snake.body[snake.body.length - 1]) {
           return isMoveToAnotherSnakeTailOK(futureHead, snakesBodies, food);
+        }
+        // Check if the future head position is the same as the head of the other snake, and if so, check if it is smaller than our snake
+        if (coord === snake.body[0]) {
+          return isSnakeHeadCollisionOK(futureHead, snakesBodies, myLength);
         }
         return false;
       }
@@ -170,21 +190,6 @@ function getOptimalMoveToEat(myHead, food, isMoveSafe) {
   return randomNextMove(Object.keys(isMoveSafe).filter((move) => isMoveSafe[move]));
 }
 
-//
-// Step 5 - Check head-on collisions with other snakes
-//
-// This function will check if the new head position is the same as any of the body coordinates of other snakes
-function isSnakeHeadCollisionOK(futureHead, snakesBodies, myLength) {
-  snakesBodies.forEach((snake) => {
-    if (futureHead.x === snake.head.x && futureHead.y === snake.head.y) {
-      console.log('Hits Other snakes head');
-      // We want to avoid head-on collisions with snakes that are bigger than us, but we want to engage with smaller snakes
-      const isBiggerThanMe = snake.length > myLength; // gameState.you.length;
-      return !isBiggerThanMe;
-    }
-  });
-  return true;
-}
 
 // move is called on every turn and returns your next move
 // Valid moves are "up", "down", "left", or "right"
@@ -253,17 +258,18 @@ function move(gameState) {
   // Check if after the move the new head position would be in the same position as any of the body coordinates of other snakes
   const opponents = gameState.board.snakes;
   const food = gameState.board.food;
+  const myLength = gameState.you.length;
   if (isMoveSafe.up) {
-    isMoveSafe.up = avoidSnakes({ x: newHead.x, y: newHead.y - 1 }, opponents, food);
+    isMoveSafe.up = avoidSnakes({ x: newHead.x, y: newHead.y - 1 }, opponents, food, myLength);
   }
   if (isMoveSafe.down) {
-    isMoveSafe.down = avoidSnakes({ x: newHead.x, y: newHead.y + 1 }, opponents, food);
+    isMoveSafe.down = avoidSnakes({ x: newHead.x, y: newHead.y + 1 }, opponents, food, myLength);
   }
   if (isMoveSafe.left) {
-    isMoveSafe.left = avoidSnakes({ x: newHead.x - 1, y: newHead.y }, opponents, food);
+    isMoveSafe.left = avoidSnakes({ x: newHead.x - 1, y: newHead.y }, opponents, food, myLength);
   }
   if (isMoveSafe.right) {
-    isMoveSafe.right = avoidSnakes({ x: newHead.x + 1, y: newHead.y }, opponents, food);
+    isMoveSafe.right = avoidSnakes({ x: newHead.x + 1, y: newHead.y }, opponents, food, myLength);
   }
 
   // Are there any safe moves left?
@@ -291,3 +297,5 @@ runServer({
   move: move,
   end: end,
 });
+
+export { avoidItself, avoidSnakes, isSnakeHeadCollisionOK, getManhattanDistance, getFoodDistances, getOptimalMoveToEat, floodFillBoard };
