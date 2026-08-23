@@ -3,6 +3,25 @@ Changelog
 All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
+[1.X.X] - 2026-08-22
+Added
+
+    Added jsdoc comments to all functions in index.js file.
+    Generated the jsdoc documentation for the index.js file and saved it in the docs folder.
+
+Changed
+
+    Nothing.
+
+Removed
+
+    Nothing.
+
+Fixed
+
+    Nothing.
+
+
 [1.1.0] - 2026-08-21
 Added
 
