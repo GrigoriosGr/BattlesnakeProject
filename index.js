@@ -116,7 +116,20 @@ function move(gameState) {
 
 
   // TODO: Step 2 - Prevent your Battlesnake from colliding with itself
-  // myBody = gameState.you.body;
+  // Check if after the move the new head position would be in the same position as any of the body coordinates
+  newHead = myHead;
+  if(isMoveSafe.up) {
+    isMoveSafe.up = avoidItself({x: newHead.x, y: newHead.y - 1}, gameState.you.body);
+  }
+  if(isMoveSafe.down) {
+    isMoveSafe.down = avoidItself({x: newHead.x, y: newHead.y + 1}, gameState.you.body);
+  }
+  if(isMoveSafe.left) {
+    isMoveSafe.left = avoidItself({x: newHead.x - 1, y: newHead.y}, gameState.you.body);
+  }
+  if(isMoveSafe.right) {
+    isMoveSafe.right = avoidItself({x: newHead.x + 1, y: newHead.y}, gameState.you.body);
+  }
 
   // TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
   // Check if after the move the new head position would be in the same position as any of the body coordinates of other snakes
