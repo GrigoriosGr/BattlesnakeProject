@@ -37,6 +37,36 @@ function end(gameState) {
   console.log("GAME OVER\n");
 }
 
+// TODO: Step 2 - Prevent your Battlesnake from colliding with itself
+// This function will check if the new head position is the same as any of the body coordinates
+function avoidItself(newHeadPos, myBody){
+
+	myBody.forEach((coord)=>{
+
+		if(newHeadPos.x== coord.x && newHeadPos.y== coord.y){
+			console.log("Hits self");
+			return false;
+		}
+	})
+	return true;
+}
+
+// TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
+// This function will check if the new head position is the same as any of the body coordinates of other snakes
+function avoidSnakes(futureHead, snakesBodies){
+
+  	snakesBodies.forEach((snake)=>{
+			snake.body.forEach((coord) =>{
+
+				if(futureHead.x===coord.x && futureHead.y===coord.y){
+					console.log("Hits Other snakes");
+					return false;
+				}
+			})
+		})
+	return true;
+}
+
 // move is called on every turn and returns your next move
 // Valid moves are "up", "down", "left", or "right"
 // See https://docs.battlesnake.com/api/example-move for available data
@@ -89,7 +119,21 @@ function move(gameState) {
   // myBody = gameState.you.body;
 
   // TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
-  // opponents = gameState.board.snakes;
+  // Check if after the move the new head position would be in the same position as any of the body coordinates of other snakes
+  opponents = gameState.board.snakes;
+  if(isMoveSafe.up) {
+    isMoveSafe.up = avoidSnakes({x: newHead.x, y: newHead.y - 1}, opponents);
+  }
+  if(isMoveSafe.down) {
+    isMoveSafe.down = avoidSnakes({x: newHead.x, y: newHead.y + 1}, opponents);
+  }
+  if(isMoveSafe.left) {
+    isMoveSafe.left = avoidSnakes({x: newHead.x - 1, y: newHead.y}, opponents);
+  }
+  if(isMoveSafe.right) {
+    isMoveSafe.right = avoidSnakes({x: newHead.x + 1, y: newHead.y}, opponents);
+  }
+
 
   // Are there any safe moves left?
   const safeMoves = Object.keys(isMoveSafe).filter(key => isMoveSafe[key]);
