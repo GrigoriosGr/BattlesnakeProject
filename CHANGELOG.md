@@ -12,6 +12,11 @@ Added
     Modifed the determineOptimalNextMove function to prioritize hunting smaller snakes over food when they are nearby and safe to attack.
     Updated test cases to include scenarios for hunting smaller snakes and verifying the new behavior of the determineOptimalNextMove function.
     Updated the JSdoc comments to reflect the new behavior of the determineOptimalNextMove function and the added functions for hunting smaller snakes.
+    Added Github Actions for a node.js workflow to run tests on push and pull requests.
+    Added Github Actions for linting and formatting checks on push and pull requests.
+    Added Github Actions for checking code coverage on push and pull requests.
+    Enabled dependabot to automatically check for dependency updates and create pull requests for them.
+    Updated JSDOC documentation
 
 Changed
 
