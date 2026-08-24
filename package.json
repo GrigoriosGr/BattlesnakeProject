@@ -8,14 +8,34 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prettier:check": "prettier --check",
+    "prettier:fix": "prettier --write",
+    "lint": "eslint .",
+    "jsdoc": "jsdoc",
+    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/BattlesnakeOfficial/starter-snake-javascript.git"
   },
   "dependencies": {
-    "express": "^4.20.0",
+    "express": "^4.22.2",
     "starter-snake-javascript": "file:"
+  },
+  "devDependencies": {
+    "@eslint-community/eslint-plugin-eslint-comments": "^4.7.2",
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.9.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-jest": "^29.16.1",
+    "eslint-plugin-sonarjs": "^4.2.0",
+    "eslint-plugin-unicorn": "^73.0.0",
+    "jest": "^30.4.2",
+    "jsdoc": "^4.0.5",
+    "prettier": "^3.9.6"
+  },
+  "allowScripts": {
+    "unrs-resolver@1.12.2": true
   }
 }
