@@ -1,5 +1,6 @@
 import { avoidItself,
   avoidSnakes,
+  randomNextMove,
   isSnakeHeadCollisionOK,
   getManhattanDistance,
   getFoodDistances,
@@ -47,10 +48,14 @@ describe("avoidSnakes", () => {
   it("should return true if the move does not collide with other snakes", () => {
     const snakes = [
       {
+        head: { x: 1, y: 1 },
         body: [{ x: 1, y: 1 }, { x: 1, y: 2 }, { x: 1, y: 3 }],
+        length: 3,
       },
       {
+        head: { x: 2, y: 2 },
         body: [{ x: 2, y: 2 }, { x: 2, y: 3 }, { x: 2, y: 4 }],
+        length: 3,
       },
     ];
     const food = [{ x: 0, y: 0 }, { x: 2, y: 5 }];
@@ -92,9 +97,13 @@ describe("testHeadCollision", () => {
     const snakes = [
       {
         body: [{ x: 1, y: 1 }, { x: 1, y: 2 }, { x: 1, y: 3 }, { x: 1, y: 4 }],
+        head: { x: 1, y: 1 },
+        length: 4,
       },
       {
         body: [{ x: 2, y: 2 }, { x: 2, y: 3 }],
+        head: { x: 2, y: 2 },
+        length: 2,
       },
     ];
 
@@ -102,17 +111,17 @@ describe("testHeadCollision", () => {
     // New Head does not collide with any snake's head
     let newHead = { x: 1, y: 0 };
     let myLength = 3; // My snake's length is 3
-    expect(testHeadCollision(newHead, snakes, myLength)).toBe(true);
+    expect(isSnakeHeadCollisionOK(newHead, snakes, myLength)).toBe(true);
 
     // Test case 2
     // New Head collides with the first snake's head which is larger than my snake's length
     newHead = { x: 1, y: 1 };
-    expect(testHeadCollision(newHead, snakes, myLength)).toBe(false);
+    expect(isSnakeHeadCollisionOK(newHead, snakes, myLength)).toBe(false);
 
     // Test case 3
     // New Head collides with the second snake's tail which is allowed as it is smaller than my snake's length
     newHead = { x: 2, y: 2 };
-    expect(testHeadCollision(newHead, snakes, myLength)).toBe(true);
+    expect(isSnakeHeadCollisionOK(newHead, snakes, myLength)).toBe(true);
 
   });
 });
@@ -159,20 +168,26 @@ describe("getSmallerSnakes", () => {
     const snakes = [
       {
         body: [{ x: 1, y: 1 }, { x: 1, y: 2 }, { x: 1, y: 3 }, { x: 1, y: 4 }],
+        length: 4,
+        head: {"x": 1, "y": 1},
       },
       {
         body: [{ x: 2, y: 2 }, { x: 2, y: 3 }],
+        length: 2,
+        head: {"x": 2, "y": 2},
       },
       {
         body: [{ x: 4, y: 2 }, { x: 4, y: 3 }, { x: 3, y: 3 }],
+        length: 3,
+        head: {"x": 4, "y": 2},
       },
     ];
     // Test case 1: There is only one smaller snake than our snake with length 3
-    let smallerSnakesNum = getSmallerSnakes(snakes, 4).length;
+    let smallerSnakesNum = getSmallerSnakes(snakes, 3).length;
     expect(smallerSnakesNum).toBe(1);
 
-    // Test case 2: There are two smaller snakes than our snake with length 5
-    smallerSnakesNum = getSmallerSnakes(snakes, 5).length;
+    // Test case 2: There are two smaller snakes than our snake with length 4
+    smallerSnakesNum = getSmallerSnakes(snakes, 4).length;
     expect(smallerSnakesNum).toBe(2);
 
     // Test case 3: There are no smaller snakes than our snake with length 2
@@ -192,12 +207,18 @@ describe("findClosestSmallerSnake", () => {
     const snakes = [
       {
         body: [{ x: 1, y: 1 }, { x: 1, y: 2 }, { x: 1, y: 3 }, { x: 1, y: 4 }],
+        head: { x: 1, y: 1 },
+        length: 4,
       },
       {
         body: [{ x: 2, y: 2 }, { x: 2, y: 3 }],
+        head: { x: 2, y: 2 },
+        length: 2,
       },
       {
         body: [{ x: 4, y: 2 }, { x: 4, y: 3 }, { x: 3, y: 3 }],
+        head: { x: 4, y: 2 },
+        length: 3,
       },
     ];
     // Test case 1: The closest smaller snake is the first
@@ -223,11 +244,58 @@ describe("moveTowardsSnake", () => {
     const myHead = { x: 0, y: 0 };
     const snakeHead = { x: 3, y: 4 };
     const isMoveSafe = {
-      up: true,
+      up: false,
       down: true,
       left: true,
       right: false
     };
     expect(moveTowardsSnake(myHead, snakeHead, isMoveSafe)).toBe("down");
+  });
+});
+
+describe("floodFillBoard", () => {
+  it("should fill the board with the new value starting from the given position", () => {
+    const board = [
+      [0, 0, 0],
+      [0, 1, 0],
+      [0, 0, 0]
+    ];
+    let row = 1;
+    let col = 1;
+    let newValue = 2;
+    floodFillBoard(board, row, col, newValue);
+    expect(board).toEqual([
+      [0, 0, 0],
+      [0, 2, 0],
+      [0, 0, 0]
+    ]);
+    const board1 = [
+      [0, 0, 0,0],
+      [0, 1, 1,0],
+      [0, 0, 1,0],
+      [0, 1, 0,0]
+    ];
+    row = 0;
+    col = 0;
+    newValue = 3;
+    floodFillBoard(board1, row, col, newValue);
+    expect(board1).toEqual([
+      [3, 3, 3, 3],
+      [3, 1, 1, 3],
+      [3, 3, 1, 3],
+      [3, 1, 3, 3]
+    ]);
+  });
+});
+
+
+describe("randomNextMove", () => {
+  it("should return a random move from the safe moves", () => {
+    const safeMoves = ["up", "down", "left", "right"];
+    const move = randomNextMove(safeMoves);
+    expect(safeMoves).toContain(move);
+    const safeMoves1 = ["up"];
+    const move1 = randomNextMove(safeMoves1);
+    expect(safeMoves1).toContain(move1);
   });
 });
