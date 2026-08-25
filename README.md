@@ -4,7 +4,7 @@ An official Battlesnake template written in JavaScript. Get started at [play.bat
 
 ![Battlesnake Logo](https://media.battlesnake.com/social/StarterSnakeGitHubRepos_JavaScript.png)
 
-This project is a great starting point for anyone wanting to program their first Battlesnake in JavaScript. It can be run locally or easily deployed to a cloud provider of your choosing. See the [Battlesnake API Docs](https://docs.battlesnake.com/api) for more detail. 
+This project is a great starting point for anyone wanting to program their first Battlesnake in JavaScript. It can be run locally or easily deployed to a cloud provider of your choosing. See the [Battlesnake API Docs](https://docs.battlesnake.com/api) for more detail.
 
 [![Run on Replit](https://repl.it/badge/github/BattlesnakeOfficial/starter-snake-javascript)](https://replit.com/@Battlesnake/starter-snake-javascript)
 
@@ -55,3 +55,10 @@ battlesnake play -W 11 -H 11 --name 'JavaScript Starter Project' --url http://lo
 Continue with the [Battlesnake Quickstart Guide](https://docs.battlesnake.com/quickstart) to customize and improve your Battlesnake's behavior.
 
 **Note:** To play games on [play.battlesnake.com](https://play.battlesnake.com) you'll need to deploy your Battlesnake to a live web server OR use a port forwarding tool like [ngrok](https://ngrok.com/) to access your server locally.
+
+## Work Done
+
+* Implemented a Battlesnake to compete
+* Created a [Github project](https://github.com/users/GrigoriosGr/projects/4/views/4) to break down the tasks to build it
+* Added [Github actions](https://github.com/GrigoriosGr/BattlesnakeProject/actions) to create a CI build flow and deploy to [Railway](https://railway.com/project/8a661cb4-1671-4077-90e0-01575635ebff?environmentId=00316805-5bc4-45c8-a381-8fb9e3faff98)
+
