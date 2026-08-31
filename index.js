@@ -16,25 +16,27 @@ import runServer from './server.js';
 // and controls your Battlesnake's appearance
 // TIP: If you open your Battlesnake URL in a browser you should see this data
 function info() {
-  console.log("INFO");
+  console.log('INFO');
 
   return {
-    apiversion: "1",
-    author: "GregG",       // TODO: Your Battlesnake Username
-    color: "#FE1212", // TODO: Choose color
-    head: "default",  // TODO: Choose head
-    tail: "default",  // TODO: Choose tail
+    apiversion: '1',
+    author: 'GregG', // Your Battlesnake Username
+    color: '#FE1212', // Choose color
+    head: 'default', // Choose head
+    tail: 'default', // Choose tail
   };
 }
 
 // start is called when your Battlesnake begins a game
 function start(gameState) {
-  console.log("GAME START");
+  gameState.snake = gameState.you;
+  console.log('GAME START');
 }
 
 // end is called when your Battlesnake finishes a game
 function end(gameState) {
-  console.log("GAME OVER\n");
+  gameState.snake = gameState.you;
+  console.log('GAME OVER\n');
 }
 
 /**
@@ -55,13 +57,7 @@ function floodFillBoard(board, row, col, newValue) {
 
   // Helper function to perform flood fill
   function fill(r, c) {
-    if (
-      r < 0 ||
-      r >= numRows ||
-      c < 0 ||
-      c >= numCols ||
-      board[r][c] !== originalValue
-    ) {
+    if (r < 0 || r >= numRows || c < 0 || c >= numCols || board[r][c] !== originalValue) {
       return;
     }
 
@@ -84,7 +80,6 @@ function floodFillBoard(board, row, col, newValue) {
   return board;
 }
 
-
 /**
  * Chooses a random move from the list of safe moves
  * @author: Grigoris Grigoropoulos
@@ -92,10 +87,11 @@ function floodFillBoard(board, row, col, newValue) {
  * @returns {string} - The chosen move.
  */
 function randomNextMove(safeMoves) {
-  const nextMove = safeMoves[Math.floor(Math.random() * safeMoves.length)];
+  const array = new Uint32Array(1);
+  crypto.getRandomValues(array);
+  const nextMove = safeMoves[array[0] % safeMoves.length];
   return nextMove;
 }
-
 
 //
 // Step 2 - Prevent your Battlesnake from colliding with itself
@@ -113,7 +109,7 @@ function avoidItself(newHeadPos, myBody) {
       console.log('Hits self');
       return false;
     }
-  };
+  }
   return true;
 }
 
@@ -136,7 +132,7 @@ function isSnakeHeadCollisionOK(newHead, snakesBodies, myLength) {
       const isBiggerThanMe = snake.length > myLength; // gameState.you.length;
       return !isBiggerThanMe;
     }
-  };
+  }
   return true;
 }
 
@@ -168,7 +164,6 @@ function isMoveToAnotherSnakeTailOK(futureHead, snake, food) {
   }
   return true;
 }
-
 
 /**
  * Checks if the new head position is the same as any of the body coordinates of other snakes
@@ -263,9 +258,7 @@ function getOptimalMoveToEat(myHead, food, isMoveSafe) {
  * @returns {Array<object>} - Array of smaller snakes.
  */
 function getSmallerSnakes(allSnakes, myLength) {
-  return allSnakes.filter(
-    (snake) => snake.length < myLength && snake.body.length > 0,
-  );
+  return allSnakes.filter((snake) => snake.length < myLength && snake.body.length > 0);
 }
 
 /**
@@ -280,13 +273,12 @@ function findClosestSmallerSnake(myHead, smallerSnakes) {
   let closestDistance = 1000000; // Initialize with a large number
 
   for (const snake of smallerSnakes) {
-    const distance = getManhattanDistance( myHead, snake.body[0]);
+    const distance = getManhattanDistance(myHead, snake.body[0]);
 
     if (distance < closestDistance) {
       closestDistance = distance;
       closestSmallerSnake = snake;
-    }
-    else if (distance === closestDistance) {
+    } else if (distance === closestDistance) {
       // If the distance is the same, choose the snake with the larger length to remove the stronger opponent from the board
       if (snake.length > closestSmallerSnake.length) {
         closestSmallerSnake = snake;
@@ -307,10 +299,10 @@ function moveTowardsSnake(myHead, snakeHead, isMoveSafe) {
   const dx = snakeHead.x - myHead.x;
   const dy = snakeHead.y - myHead.y;
 
-  if (dx !== 0 && isMoveSafe[dx > 0 ? "right" : "left"]) {
-    return dx > 0 ? "right" : "left";
-  } else if (dy !== 0 && isMoveSafe[dy > 0 ? "down" : "up"]) {
-    return dy > 0 ? "down" : "up";
+  if (dx !== 0 && isMoveSafe[dx > 0 ? 'right' : 'left']) {
+    return dx > 0 ? 'right' : 'left';
+  } else if (dy !== 0 && isMoveSafe[dy > 0 ? 'down' : 'up']) {
+    return dy > 0 ? 'down' : 'up';
   }
   return randomNextMove(isMoveSafe);
 }
@@ -367,8 +359,6 @@ function determineOptimalNextMove(gameState, isMoveSafe) {
   return randomNextMove(isMoveSafe);
 }
 
-
-
 /**
  * move is called on every turn and returns your next move
  * Valid moves are "up", "down", "left", or "right"
@@ -378,55 +368,51 @@ function determineOptimalNextMove(gameState, isMoveSafe) {
  * @returns {string} - The recommended move for the snake.
  */
 function move(gameState) {
-
   let isMoveSafe = {
     up: true,
     down: true,
     left: true,
-    right: true
+    right: true,
   };
 
   // We've included code to prevent your Battlesnake from moving backwards
   const myHead = gameState.you.body[0];
   const myNeck = gameState.you.body[1];
 
-  if (myNeck.x < myHead.x) {        // Neck is left of head, don't move left
+  if (myNeck.x < myHead.x) {
+    // Neck is left of head, don't move left
     isMoveSafe.left = false;
-
-  } else if (myNeck.x > myHead.x) { // Neck is right of head, don't move right
+  } else if (myNeck.x > myHead.x) {
+    // Neck is right of head, don't move right
     isMoveSafe.right = false;
-
-  } else if (myNeck.y < myHead.y) { // Neck is below head, don't move down
+  } else if (myNeck.y < myHead.y) {
+    // Neck is below head, don't move down
     isMoveSafe.down = false;
-
-  } else if (myNeck.y > myHead.y) { // Neck is above head, don't move up
+  } else if (myNeck.y > myHead.y) {
+    // Neck is above head, don't move up
     isMoveSafe.up = false;
   }
 
-  // TODO: Step 1 - Prevent your Battlesnake from moving out of bounds
+  // Step 1 - Prevent your Battlesnake from moving out of bounds
   // boardWidth = gameState.board.width;
   // boardHeight = gameState.board.height;
 
-  // TODO: Step 2 - Prevent your Battlesnake from colliding with itself
+  // Step 2 - Prevent your Battlesnake from colliding with itself
   // myBody = gameState.you.body;
 
-  // TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
+  // Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
   // opponents = gameState.board.snakes;
 
+  // Step 4 - Find the best move based on the current game state and the safe moves available
+  const safeMoves = Object.keys(isMoveSafe).filter((key) => isMoveSafe[key]);
+  const nextMove = determineOptimalNextMove(gameState, safeMoves);
+
   // Are there any safe moves left?
-  const safeMoves = Object.keys(isMoveSafe).filter(key => isMoveSafe[key]);
   if (safeMoves.length == 0) {
     console.log(`MOVE ${gameState.turn}: No safe moves detected! Moving down`);
-    return { move: "down" };
+    return { move: 'down' };
   }
-
-  // Choose a random move from the safe moves
-  const nextMove = safeMoves[Math.floor(Math.random() * safeMoves.length)];
-
-  // TODO: Step 4 - Move towards food instead of random, to regain health and survive longer
-  // food = gameState.board.food;
-
-  console.log(`MOVE ${gameState.turn}: ${nextMove}`)
+  console.log(`MOVE ${gameState.turn}: ${nextMove}`);
   return { move: nextMove };
 }
 
@@ -434,10 +420,11 @@ runServer({
   info: info,
   start: start,
   move: move,
-  end: end
+  end: end,
 });
 
-export { avoidItself,
+export {
+  avoidItself,
   avoidSnakes,
   isSnakeHeadCollisionOK,
   getManhattanDistance,
@@ -447,4 +434,5 @@ export { avoidItself,
   findClosestSmallerSnake,
   moveTowardsSnake,
   randomNextMove,
-  floodFillBoard };
+  floodFillBoard,
+};

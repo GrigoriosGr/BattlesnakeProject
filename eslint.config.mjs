@@ -12,7 +12,7 @@ export default defineConfig([
     extends: ["js/recommended"],
     languageOptions: { globals: globals.browser },
   },
-  ...sonarjs.configs.recommended,
+  sonarjs.configs.recommended,
   eslintConfigPrettier,
   {
     plugins: {
